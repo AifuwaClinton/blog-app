@@ -16,6 +16,12 @@ app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
 app.use("", router);
 
+app.get('/contact', (req, res) => {
+  res.render('contact'); 
+});
+
+
+
 
 
 
