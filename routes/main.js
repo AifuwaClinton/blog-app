@@ -31,15 +31,18 @@ router.get("/", async (req, res) => {
          currentPage: page,
          nextPage: hasNextPage ? nextPage : null,
       });
-   
+
    } catch (error) {
       console.log(error);
    }
 });
+
+
 /**
  * GET request
  * API endpoint to get a particular blog
  */
+
 router.get("/blog/:id", async (req, res) => {
    try {
       const data = await Blog.findById(req.params.id);
@@ -55,13 +58,28 @@ router.get("/blog/:id", async (req, res) => {
    }
 });
 
-router.get("/about", async (req, res) => {
+
+/**
+ * POST request
+ * API endpoint to search a blog
+ */
+
+router.post("/search", async (req, res) => {
    try {
-      const data = await Blog.find().sort({ createdAt: -1 });
-      res.render("about", { data });
+      const searchTerm  = req.body.searchTerm;
+      const removeSpecialCharacters = searchTerm.replace(/[^a-zA-Z0-9 ]/g, "")
+      const data = await Blog.find({
+         $or: [
+            { title: { $regex: new RegExp(removeSpecialCharacters, "i") } },
+            { body: { $regex: new RegExp(removeSpecialCharacters, "i") } },
+         ],
+      });
+      res.render("search", { data });
    } catch (error) {
       console.log(error);
    }
+
 });
+
 
 module.exports = router;
